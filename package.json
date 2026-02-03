@@ -1,0 +1,32 @@
+{
+  "name": "searchmix",
+  "version": "1.0.0",
+  "description": "📑 Lightning-fast full-text search engine for Markdown, EPUB, and PDF documents powered by SQLite FTS5",
+  "license": "MIT",
+  "author": "",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "node --test test/*.test.js",
+    "test:watch": "node --test --watch test/*.test.js"
+  },
+  "keywords": [
+    "markdown",
+    "search",
+    "fts5",
+    "sqlite",
+    "epub",
+    "fulltext",
+    "indexing"
+  ],
+  "dependencies": {
+    "@opendocsg/pdf2md": "^0.2.3",
+    "better-sqlite3": "^11.8.1",
+    "epub2": "^3.0.2",
+    "glob": "^11.0.0",
+    "micromatch": "^4.0.8",
+    "remark-parse": "^11.0.0",
+    "unified": "^11.0.5",
+    "unist-util-visit": "^5.0.0"
+  }
+}
