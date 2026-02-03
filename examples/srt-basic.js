@@ -26,7 +26,7 @@ try {
 
 // Convertir SRT a Markdown con opciones personalizadas
 const options = {
-  sceneGap: 5, // Pausas de 5+ segundos crean nueva escena
+  sceneGap: 10, // Pausas de 5+ segundos crean nueva escena
   includeTimestamps: true, // Incluir timestamps en el markdown
   groupDialogues: true, // Agrupar diálogos consecutivos
   inferScenes: true, // Inferir descripción de escenas

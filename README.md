@@ -755,7 +755,7 @@ SearchMix uses SQLite's FTS5 (Full-Text Search 5) extension to provide fast, eff
 By default, SearchMix uses `./db/searchmix.db`. You can customize this:
 
 ```javascript
-const searcher = new SearchMix({ dbPath: "./custom/path.db" });
+const searcher = new SearchMix({ dbPath: "./db/path.db" });
 ```
 
 ### BM25 Weights
