@@ -1,12 +1,12 @@
 # 📑 SearchMix
 
-A powerful JavaScript library for indexing and searching Markdown, EPUB, and PDF documents using SQLite FTS5 (Full-Text Search).
+A powerful JavaScript library for indexing and searching Markdown, EPUB, PDF, TXT, and SRT documents using SQLite FTS5 (Full-Text Search).
 
 ## Features
 
 - 🚀 **Fast Full-Text Search** - Powered by SQLite FTS5 with BM25 ranking
 - 🧠 **Smart Indexing** - Automatically detects new and modified files, only reindexes what changed
-- 📚 **Multiple Formats** - Support for Markdown (.md), EPUB, and PDF files
+- 📚 **Multiple Formats** - Support for Markdown (.md), EPUB, PDF, TXT, and SRT files
 - 🗂️ **Collections** - Organize documents into logical groups
 - 🔗 **Method Chaining** - Fluent API for easy composition
 - 💾 **Buffer Support** - Index content directly from memory
@@ -85,7 +85,7 @@ Add document(s) to the index. Returns `this` for chaining.
 **Parameters:**
 
 - `pathOrBuffer` (string|Buffer) - Can be:
-  - Path to a file (`.md`, `.markdown`, `.epub`)
+  - Path to a file (`.md`, `.markdown`, `.epub`, `.pdf`, `.txt`, `.srt`)
   - Path to a directory (scans recursively)
   - Buffer containing Markdown content
 - `options` (object)
@@ -105,7 +105,7 @@ SearchMix automatically detects and handles changes:
 
 This means you can safely call `addDocument()` repeatedly without worrying about duplicates or performance - it will only reindex files that have actually changed!
 
-**Note:** PDF and EPUB files are converted asynchronously. For immediate search results, use Markdown files or wait ~2 seconds after adding PDFs/EPUBs.
+**Note:** PDF, EPUB, TXT, and SRT files are converted asynchronously. For immediate search results, use Markdown files or wait ~2 seconds after adding converted files.
 
 **Example:**
 
@@ -731,10 +731,11 @@ searcher.addDocument("./docs", { update: true });  // Re-index with new schema
 
 SearchMix uses SQLite's FTS5 (Full-Text Search 5) extension to provide fast, efficient full-text search capabilities:
 
-1. **Parsing** - Markdown and EPUB files are parsed to extract structured content:
+1. **Parsing** - Documents are parsed to extract structured content:
    - `title` - First h1 heading
    - `headings` - All other headings (h2-h6)
    - `body` - Paragraph text (and optionally code blocks)
+   - Supported formats: Markdown, EPUB, PDF, TXT, and SRT are automatically converted to a searchable format
 
 2. **Indexing** - Content is stored in an FTS5 virtual table with separate columns for title, headings, and body
 
@@ -747,6 +748,8 @@ SearchMix uses SQLite's FTS5 (Full-Text Search 5) extension to provide fast, eff
 - **Markdown** - `.md`, `.markdown`
 - **EPUB** - `.epub` (automatically converted to Markdown)
 - **PDF** - `.pdf` (automatically converted to Markdown)
+- **Plain Text** - `.txt` (automatically converted to Markdown)
+- **Subtitles** - `.srt` (automatically converted to Markdown with timestamps)
 
 ## Configuration
 

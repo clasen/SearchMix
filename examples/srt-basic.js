@@ -4,7 +4,7 @@ import path from "node:path";
 
 console.log("=== Ejemplo Básico: Conversión SRT a Markdown ===\n");
 
-const srtPath = "./examples/srt/her2013.srt";
+const srtPath = "./examples/srt/The_Social_Network.srt";
 const outputPath = srtPath.replace(".srt", ".md");
 
 console.log(`Convirtiendo: ${srtPath}`);
@@ -26,7 +26,7 @@ try {
 
 // Convertir SRT a Markdown con opciones personalizadas
 const options = {
-  sceneGap: 10, // Pausas de 5+ segundos crean nueva escena
+  sceneGap: 10, // Pausas de 10+ segundos crean nueva escena
   includeTimestamps: true, // Incluir timestamps en el markdown
   groupDialogues: true, // Agrupar diálogos consecutivos
   inferScenes: true, // Inferir descripción de escenas
