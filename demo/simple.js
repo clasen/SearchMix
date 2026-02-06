@@ -6,7 +6,7 @@ async function main() {
   const searcher = new SearchMix();
 
   // Add documents - await ensures EPUB/PDF conversions complete
-  await searcher.addDocument("./examples/docs");
+  await searcher.addDocument("./demo/docs");
 
   // Search
   const results = searcher.search("Valdés");

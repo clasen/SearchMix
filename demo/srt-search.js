@@ -11,7 +11,7 @@ console.log("=== Ejemplo: Indexar y buscar en archivos SRT ===\n");
 
   // Indexar el archivo SRT
   console.log("📚 Indexando archivo SRT...");
-  const srtPath = "./examples/srt/her2013.srt";
+  const srtPath = "./demo/srt/her2013.srt";
   await searchMix.addDocument(srtPath, { collection: "subtitles" });
 
   // Obtener estadísticas
@@ -91,7 +91,7 @@ console.log("=== Ejemplo: Indexar y buscar en archivos SRT ===\n");
 
   searchMix.close();
   console.log("\n✅ Ejemplo completado!");
-  console.log("📁 Base de datos guardada en: ./examples/subtitles.db");
+  console.log("📁 Base de datos guardada en: ./demo/subtitles.db");
 })().catch((error) => {
   console.error("\n❌ Error:", error.message);
   console.error(error.stack);

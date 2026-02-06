@@ -5,13 +5,14 @@ console.log("=== Example 1: Basic Usage - Full Content ===\n");
 const searcher1 = new SearchMix();
 
 // Add documents - await ensures EPUB/PDF conversions complete
-await searcher1.addDocument("./examples/docs");
+await searcher1.addDocument("./demo/books");
 
 // Search - returns a flat list of snippets
-const results1 = searcher1.search("plato volador", {
+const results1 = searcher1.search("pija", {
     limit: 1,
     limitSnippets: 1,
-    snippetLength: 500  // Much larger context to show full stories
+    // count: false,
+    snippetLength: 2000  // Much larger context to show full stories
 });
 
 console.log("Search results:");
@@ -28,9 +29,9 @@ results1.results.forEach((snippet, index) => {
     console.log(`   Rank: ${snippet.rank}`);
     console.log(`${"=".repeat(80)}\n`);
 
-    const text = snippet.getText({ length: 10000 });
+    const text = snippet.getText({ length: 10000, offset: -1000 });
     console.log('---------', text);
-    
+
     // Show section information
     if (snippet.heading) {
         console.log(`\n📍 Section: ${snippet.heading.text}`);

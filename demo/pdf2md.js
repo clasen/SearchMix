@@ -1,18 +1,18 @@
-import { epubToMarkdown } from "../lib/epub-converter.js";
+import { pdfToMarkdown } from "../lib/pdf-converter.js";
 import fs from "node:fs";
 import path from "node:path";
 
-console.log("=== Ejemplo Básico: Conversión EPUB a Markdown ===\n");
+console.log("=== Ejemplo Básico: Conversión PDF a Markdown ===\n");
 
-const epubPath = "./examples/docs/Normal People -- Sally Rooney -- 2018.epub";
-// const epubPath = "./examples/docs/Están aquí - J. J. Benítez.epub";
-const outputPath = epubPath.replace(".epub", ".md");
+// const pdfPath = "./demo/docs/12_Covers.pdf";
+const pdfPath = "./demo/docs/01 - Charlas con mi hemisferio derecho.pdf";
+const outputPath = pdfPath.replace(".pdf", ".md");
 
-console.log(`Convirtiendo: ${epubPath}`);
+console.log(`Convirtiendo: ${pdfPath}`);
 console.log(`Archivo de salida: ${outputPath}\n`);
 
-// Convertir EPUB a Markdown
-epubToMarkdown(epubPath)
+// Convertir PDF a Markdown
+pdfToMarkdown(pdfPath)
   .then((markdown) => {
     // Guardar el markdown en un archivo
     fs.writeFileSync(outputPath, markdown, "utf-8");

@@ -652,7 +652,7 @@ For a 240-section book:
 - **Breadcrumbs**: Build navigation paths by traversing parent IDs
 - **Context Loading**: Get full section content when user clicks on a result
 
-See `examples/lightweight-navigation.js` and `examples/LIGHTWEIGHT-NAVIGATION.md` for complete examples.
+See `demo/lightweight-navigation.js` for complete examples.
 
 ### Smart Indexing (Automatic Duplicate Prevention)
 

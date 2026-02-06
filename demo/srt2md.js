@@ -4,7 +4,7 @@ import path from "node:path";
 
 console.log("=== Ejemplo Básico: Conversión SRT a Markdown ===\n");
 
-const srtPath = "./examples/srt/The_Social_Network.srt";
+const srtPath = "./demo/srt/The_Social_Network.srt";
 const outputPath = srtPath.replace(".srt", ".md");
 
 console.log(`Convirtiendo: ${srtPath}`);

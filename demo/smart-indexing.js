@@ -9,7 +9,7 @@ async function main() {
 
   // Primera ejecución: indexa todos los archivos
   console.log("📚 Primera ejecución - indexando documentos...");
-  await searcher.addDocument("./examples/docs");
+  await searcher.addDocument("./demo/docs");
   
   let stats = searcher.getStats();
   console.log(`✓ ${stats.totalDocs} documentos indexados\n`);
@@ -17,7 +17,7 @@ async function main() {
   // Segunda ejecución: NO reindexará porque los archivos no cambiaron
   console.log("🔍 Segunda ejecución - verificando cambios...");
   const startTime = Date.now();
-  await searcher.addDocument("./examples/docs");
+  await searcher.addDocument("./demo/docs");
   const elapsed = Date.now() - startTime;
   
   stats = searcher.getStats();
@@ -25,7 +25,7 @@ async function main() {
   console.log(`✓ ${stats.totalDocs} documentos (ninguno reindexado)\n`);
 
   // Simular cambio en un archivo
-  const testFile = "./examples/docs/test-change.md";
+  const testFile = "./demo/docs/test-change.md";
   const testContent = `# Test Document
 
 This is a test document created at ${new Date().toISOString()}.
@@ -43,7 +43,7 @@ Content of section 2.
   fs.writeFileSync(testFile, testContent);
   
   // Indexar el nuevo archivo
-  await searcher.addDocument("./examples/docs");
+  await searcher.addDocument("./demo/docs");
   stats = searcher.getStats();
   console.log(`✓ Nuevo archivo detectado y agregado`);
   console.log(`✓ Total: ${stats.totalDocs} documentos\n`);
@@ -57,7 +57,7 @@ Content of section 2.
   
   // Reindexar - debería detectar el cambio
   console.log("🔄 Reindexando - debería detectar el cambio...");
-  await searcher.addDocument("./examples/docs");
+  await searcher.addDocument("./demo/docs");
   
   // Buscar el nuevo contenido
   const results = searcher.search("Section 3");

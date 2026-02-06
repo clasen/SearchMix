@@ -31,6 +31,6 @@ coverage/
 # Build outputs
 dist/
 build/
-/examples/books
-/examples/docs
-/examples/srt
+/demo/books
+/demo/docs
+/demo/srt
