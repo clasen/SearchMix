@@ -64,8 +64,7 @@ Siempre revisa antes de merge.
 
   // Búsqueda
   const results = searcher.search('javascript OR servidor', { 
-    allOccurrences: true,
-    maxOccurrences: 10
+    limitSnippets: 10
   });
 
   if (results.results.length === 0) {

@@ -50,7 +50,7 @@ describe("SearchMix", () => {
       searcher = new SearchMix({ dbPath: TEST_DB_PATH });
       const content = Buffer.from("# Test Document\n\nThis is a test.");
       
-      await searcher.addDocument(content, { collection: "test" });
+      await searcher.addDocument(content, { tags: ["test"] });
       
       const stats = searcher.getStats();
       assert.strictEqual(stats.totalDocs, 1);
@@ -66,7 +66,7 @@ Content of section 1.
 Content of section 2.
 `);
       
-      await searcher.addDocument(content, { collection: "test" });
+      await searcher.addDocument(content, { tags: ["test"] });
       
       const results = searcher.search("section");
       assert.ok(results.totalCount > 0);
@@ -78,8 +78,8 @@ Content of section 2.
       
       const content = Buffer.from("# Duplicate Test\nSome content.");
       
-      await searcher.addDocument(content, { collection: "test" });
-      await searcher.addDocument(content, { collection: "test" });
+      await searcher.addDocument(content, { tags: ["test"] });
+      await searcher.addDocument(content, { tags: ["test"] });
       
       const stats = searcher.getStats();
       // Los buffers siempre generan nuevas rutas únicas (buffer://<uuid>)
@@ -100,7 +100,7 @@ JavaScript is a programming language.
 Use let and const for variables.
 ## Functions
 Functions are reusable code blocks.
-`), { collection: "docs" });
+`), { tags: ["docs"] });
     });
 
     it("debería encontrar documentos por término simple", () => {
@@ -116,7 +116,8 @@ Functions are reusable code blocks.
       assert.ok(snippet.text);
       assert.ok(snippet.documentPath);
       assert.ok(snippet.documentTitle);
-      assert.strictEqual(snippet.collection, "docs");
+      assert.ok(Array.isArray(snippet.tags));
+      assert.ok(snippet.tags.includes("docs"));
       assert.ok(typeof snippet.rank === "number");
     });
 
@@ -130,9 +131,9 @@ Functions are reusable code blocks.
       assert.ok(results.totalCount > 0);
     });
 
-    it("debería retornar todas las ocurrencias cuando allOccurrences=true", () => {
+    it("debería retornar múltiples snippets por documento", () => {
       const results = searcher.search("functions", { 
-        allOccurrences: true 
+        limitSnippets: 5 
       });
       assert.ok(results.totalSnippets >= results.totalCount);
     });
@@ -140,7 +141,7 @@ Functions are reusable code blocks.
     it("debería respetar el límite de resultados", () => {
       const results = searcher.search("javascript OR functions", { 
         limit: 1,
-        allOccurrences: false  // Una ocurrencia por documento
+        limitSnippets: 1
       });
       assert.ok(results.results.length <= 1);
     });
@@ -156,7 +157,7 @@ Functions are reusable code blocks.
 El mar Mediterráneo es hermoso.
 ## Visita a París
 París es la capital de Francia.
-`), { collection: "travel" });
+`), { tags: ["travel"] });
     });
 
     it("debería encontrar 'Mediterráneo' buscando 'mediterraneo'", () => {
@@ -176,40 +177,91 @@ París es la capital de Francia.
     });
   });
 
-  describe("Colecciones", () => {
+  describe("Tags (colecciones como tags)", () => {
     before(async () => {
       searcher = new SearchMix({ dbPath: TEST_DB_PATH });
       searcher.clear();
       
       await searcher.addDocument(
-        Buffer.from("# Doc 1\nContent for collection A."),
-        { collection: "collectionA" }
+        Buffer.from("# Doc 1\nContent for tag A with enough text to detect language properly."),
+        { tags: ["tagA"] }
       );
       await searcher.addDocument(
-        Buffer.from("# Doc 2\nContent for collection B."),
-        { collection: "collectionB" }
+        Buffer.from("# Doc 2\nContent for tag B with enough text to detect language properly."),
+        { tags: ["tagB"] }
       );
     });
 
-    it("debería filtrar búsqueda por colección", () => {
+    it("debería filtrar búsqueda por tag", () => {
       const results = searcher.search("content", { 
-        collection: "collectionA" 
+        tags: "tagA" 
       });
       assert.strictEqual(results.totalCount, 1);
-      assert.strictEqual(results.results[0].collection, "collectionA");
+      assert.ok(results.results[0].tags.includes("tagA"));
     });
 
-    it("debería obtener estadísticas por colección", () => {
+    it("debería obtener estadísticas por tag", () => {
       const stats = searcher.getStats();
       assert.strictEqual(stats.totalDocs, 2);
-      assert.strictEqual(stats.collections.collectionA, 1);
-      assert.strictEqual(stats.collections.collectionB, 1);
+      assert.strictEqual(stats.tags.tagA, 1);
+      assert.strictEqual(stats.tags.tagB, 1);
     });
 
-    it("debería eliminar colección completa", () => {
-      searcher.removeCollection("collectionA");
+    it("debería soportar múltiples tags por documento", async () => {
+      searcher.clear();
+      
+      await searcher.addDocument(
+        Buffer.from("# Multi-tag Doc\nThis document has multiple tags for testing purposes."),
+        { tags: ["notes", "important"] }
+      );
+      
+      // Should be found by either tag
+      const resultsA = searcher.search("document", { tags: "notes" });
+      const resultsB = searcher.search("document", { tags: "important" });
+      assert.ok(resultsA.totalCount > 0);
+      assert.ok(resultsB.totalCount > 0);
+    });
+
+    it("documentos sin tags deberían aparecer en búsquedas con tag filter", async () => {
+      searcher.clear();
+      
+      // Untagged document (global)
+      await searcher.addDocument(
+        Buffer.from("# Global Doc\nThis global document should appear everywhere when searching."),
+        { tags: [] }
+      );
+      // Tagged document
+      await searcher.addDocument(
+        Buffer.from("# Tagged Doc\nThis tagged document should only appear with matching tag."),
+        { tags: ["specific"] }
+      );
+      
+      // Search with tag filter: should find both (untagged = global)
+      const withTag = searcher.search("document", { tags: "specific" });
+      assert.strictEqual(withTag.totalCount, 2);
+      
+      // Search without filter: should find both
+      const noFilter = searcher.search("document");
+      assert.strictEqual(noFilter.totalCount, 2);
+    });
+
+    it("debería auto-detectar idioma como tag", async () => {
+      searcher.clear();
+      
+      await searcher.addDocument(
+        Buffer.from("# Guía de JavaScript\nJavaScript es un lenguaje de programación muy utilizado en el desarrollo web moderno. Permite crear aplicaciones interactivas y dinámicas."),
+        { tags: ["docs"] }
+      );
+      
       const stats = searcher.getStats();
-      assert.strictEqual(stats.collections.collectionA, undefined);
+      assert.ok(stats.tags.spa, "debería detectar español");
+      assert.ok(stats.tags.docs, "debería mantener tag manual");
+    });
+
+    it("debería eliminar documentos por tag", () => {
+      searcher.removeByTag("docs");
+      const stats = searcher.getStats();
+      assert.strictEqual(stats.tags.docs, undefined);
     });
   });
 
@@ -227,11 +279,11 @@ Content in section 1.1
 Content in section 1.2
 ## Chapter 2
 Content in chapter 2
-`), { collection: "nav" });
+`), { tags: ["nav"] });
     });
 
     it("debería incluir información de heading en snippets", () => {
-      const results = searcher.search("section", { allOccurrences: true });
+      const results = searcher.search("section");
       const snippet = results.results.find(s => s.heading);
       
       if (snippet && snippet.heading) {
@@ -242,7 +294,7 @@ Content in chapter 2
     });
 
     it("debería permitir obtener detalles de heading por ID", () => {
-      const results = searcher.search("section", { allOccurrences: true });
+      const results = searcher.search("section");
       const snippet = results.results.find(s => s.sectionId);
       
       if (snippet && snippet.sectionId) {
@@ -276,7 +328,7 @@ Content in chapter 2
       searcher.clear();
       await searcher.addDocument(
         Buffer.from("# Doc to remove\nContent."),
-        { collection: "test" }
+        { tags: ["test"] }
       );
       
       const statsBefore = searcher.getStats();
@@ -291,7 +343,7 @@ Content in chapter 2
     it("debería obtener documento por ruta", async () => {
       searcher.clear();
       const content = Buffer.from("# Get Test\nSome content here.");
-      await searcher.addDocument(content, { collection: "test" });
+      await searcher.addDocument(content, { tags: ["test"] });
       
       // Para buffers no podemos usar get() sin conocer la ruta exacta
       // Pero podemos buscar
@@ -300,8 +352,8 @@ Content in chapter 2
     });
 
     it("debería limpiar toda la base de datos", async () => {
-      await searcher.addDocument(Buffer.from("# Doc 1"), { collection: "a" });
-      await searcher.addDocument(Buffer.from("# Doc 2"), { collection: "b" });
+      await searcher.addDocument(Buffer.from("# Doc 1"), { tags: ["a"] });
+      await searcher.addDocument(Buffer.from("# Doc 2"), { tags: ["b"] });
       
       searcher.clear();
       
@@ -320,7 +372,7 @@ Content in chapter 2
 This is a paragraph with the word search in it.
 This is another paragraph with search again.
 And one more time search appears here.
-`), { collection: "test" });
+`), { tags: ["test"] });
     });
 
     it("debería ajustar longitud del snippet", () => {
@@ -332,10 +384,9 @@ And one more time search appears here.
       }
     });
 
-    it("debería limitar máximo de ocurrencias", () => {
+    it("debería limitar máximo de snippets por documento", () => {
       const limited = searcher.search("search", { 
-        allOccurrences: true,
-        maxOccurrences: 2 
+        limitSnippets: 2 
       });
       assert.ok(limited.totalSnippets <= 2);
     });

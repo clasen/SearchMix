@@ -34,7 +34,7 @@ console.log("=== Ejemplo: Indexar y buscar en archivos SRT ===\n");
     console.log(`📝 ${description}:`);
     const searchResults = searchMix.search(query, {
       limit: 3,
-      allOccurrences: false,
+      limitSnippets: 1,
     });
 
     if (searchResults.results.length > 0) {
@@ -57,7 +57,7 @@ console.log("=== Ejemplo: Indexar y buscar en archivos SRT ===\n");
   console.log("🎬 Búsqueda avanzada con contexto:\n");
   const advancedResults = searchMix.search("computadora", {
     limit: 5,
-    allOccurrences: true,
+    limitSnippets: 5,
   });
 
   if (advancedResults.results.length > 0) {

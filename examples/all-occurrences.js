@@ -43,9 +43,9 @@ La búsqueda debe ser rápida y precisa.
 
   console.log("Documento indexado con múltiples ocurrencias de 'búsqueda'\n");
 
-  // Ejemplo 1: Una sola ocurrencia por documento (comportamiento con allOccurrences: false)
+  // Ejemplo 1: Una sola ocurrencia por documento
   console.log("=== 1. Una Ocurrencia por Documento ===\n");
-  const single = searcher.search("búsqueda", { allOccurrences: false });
+  const single = searcher.search("búsqueda", { limitSnippets: 1 });
   console.log(`Total snippets: ${single.totalSnippets}\n`);
   single.results.forEach((snippet, index) => {
     console.log(`Snippet ${index + 1}:`);
@@ -58,8 +58,7 @@ La búsqueda debe ser rápida y precisa.
   // Ejemplo 2: Todas las ocurrencias (comportamiento por defecto)
   console.log("\n=== 2. Todas las Ocurrencias ===\n");
   const multiple = searcher.search("búsqueda", { 
-    allOccurrences: true,
-    maxOccurrences: 10 
+    limitSnippets: 10 
   });
 
   console.log(`Total documentos: ${multiple.totalCount}`);
@@ -77,8 +76,7 @@ La búsqueda debe ser rápida y precisa.
   // Ejemplo 3: Limitar ocurrencias
   console.log("=== 3. Primeras 3 Ocurrencias ===\n");
   const limited = searcher.search("búsqueda", { 
-    allOccurrences: true,
-    maxOccurrences: 3
+    limitSnippets: 3
   });
 
   console.log(`Mostrando ${limited.totalSnippets} snippets:\n`);
@@ -89,8 +87,7 @@ La búsqueda debe ser rápida y precisa.
   // Ejemplo 4: Búsqueda con múltiples términos
   console.log("\n=== 4. Múltiples Términos ===\n");
   const multiTerm = searcher.search("búsqueda OR algoritmo", { 
-    allOccurrences: true,
-    maxOccurrences: 5
+    limitSnippets: 5
   });
 
   console.log(`Encontrados ${multiTerm.totalSnippets} snippets de los términos:\n`);

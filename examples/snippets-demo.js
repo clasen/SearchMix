@@ -46,7 +46,7 @@ el desarrollo web moderno.
 
   // Ejemplo 1: Búsqueda simple - retorna lista plana de snippets
   console.log("=== 1. Búsqueda: 'búsqueda' ===\n");
-  const results1 = searcher.search("búsqueda", { limit: 5, allOccurrences: false });
+  const results1 = searcher.search("búsqueda", { limit: 5, limitSnippets: 1 });
   
   results1.results.forEach((snippet, i) => {
     console.log(`${i + 1}. ${snippet.documentTitle}`);
@@ -56,7 +56,7 @@ el desarrollo web moderno.
 
   // Ejemplo 2: Búsqueda en título
   console.log("=== 2. Búsqueda en título: 'title:JavaScript' ===\n");
-  const results2 = searcher.search("title:JavaScript", { allOccurrences: false });
+  const results2 = searcher.search("title:JavaScript", { limitSnippets: 1 });
   
   results2.results.forEach((snippet, i) => {
     console.log(`${i + 1}. ${snippet.documentTitle}`);
@@ -68,7 +68,7 @@ el desarrollo web moderno.
   console.log("=== 3. Búsqueda con snippet largo: 'FTS5' ===\n");
   const results3 = searcher.search("FTS5", { 
     snippetLength: 200,
-    allOccurrences: false 
+    limitSnippets: 1 
   });
   
   results3.results.forEach((snippet, i) => {

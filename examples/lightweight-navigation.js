@@ -51,8 +51,7 @@ Usa import/export para trabajar con módulos.
   console.log("=== 1. Búsqueda Básica (Snippets Ligeros) ===\n");
   
   const results = searcher.search("async", { 
-    allOccurrences: true,
-    maxOccurrences: 5
+    limitSnippets: 5
   });
 
   if (results.results.length > 0) {

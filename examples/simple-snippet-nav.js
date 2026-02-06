@@ -35,7 +35,7 @@ Son necesarias en algunos casos.
 `), { collection: "docs" });
 
   // Búsqueda
-  const results = searcher.search("arrow functions", { allOccurrences: true });
+  const results = searcher.search("arrow functions");
 
   if (results.results.length === 0) {
     console.log("No se encontraron resultados");

@@ -51,8 +51,7 @@ Considera factores como escalabilidad, consistencia y facilidad de uso.
   console.log("=== Búsqueda: 'base de datos' ===\n");
   const results = searcher.search("base de datos", { 
     limit: 5,
-    allOccurrences: true,
-    maxOccurrences: 10
+    limitSnippets: 10
   });
 
   // Agrupar por documento

@@ -91,7 +91,7 @@ Keep learning and practicing.
 
   describe("Navegación jerárquica", () => {
     it("debería tener información de heading", () => {
-      const results = searcher.search("arrow functions", { allOccurrences: true });
+      const results = searcher.search("arrow functions");
       const snippet = results.results.find(s => s.heading);
 
       if (snippet) {
@@ -103,7 +103,7 @@ Keep learning and practicing.
     });
 
     it("debería verificar existencia de padre", () => {
-      const results = searcher.search("arrow", { allOccurrences: true });
+      const results = searcher.search("arrow");
       const snippet = results.results.find(s => s.heading && s.heading.depth > 1);
 
       if (snippet) {
@@ -113,7 +113,7 @@ Keep learning and practicing.
     });
 
     it("debería obtener información del padre", () => {
-      const results = searcher.search("let and const", { allOccurrences: true });
+      const results = searcher.search("let and const");
       const snippet = results.results.find(s => s.heading && s.heading.depth === 3);
 
       if (snippet && snippet.hasParent()) {
@@ -126,7 +126,7 @@ Keep learning and practicing.
     });
 
     it("debería verificar existencia de hijos", () => {
-      const results = searcher.search("functions", { allOccurrences: true });
+      const results = searcher.search("functions");
       const snippet = results.results.find(s => s.heading && s.heading.depth === 2);
 
       if (snippet) {
@@ -136,7 +136,7 @@ Keep learning and practicing.
     });
 
     it("debería obtener hijos", () => {
-      const results = searcher.search("functions", { allOccurrences: true });
+      const results = searcher.search("functions");
       const snippet = results.results.find(s => 
         s.heading && s.heading.depth === 2 && s.hasChildren()
       );
@@ -151,7 +151,7 @@ Keep learning and practicing.
     });
 
     it("debería obtener un hijo específico", () => {
-      const results = searcher.search("functions", { allOccurrences: true });
+      const results = searcher.search("functions");
       const snippet = results.results.find(s => 
         s.heading && s.heading.depth === 2 && s.hasChildren()
       );
@@ -166,7 +166,7 @@ Keep learning and practicing.
 
   describe("Breadcrumbs", () => {
     it("debería generar breadcrumbs como array", () => {
-      const results = searcher.search("arrow functions", { allOccurrences: true });
+      const results = searcher.search("arrow functions");
       const snippet = results.results.find(s => s.heading && s.heading.depth > 1);
 
       if (snippet) {
@@ -179,7 +179,7 @@ Keep learning and practicing.
     });
 
     it("debería generar breadcrumbs como texto", () => {
-      const results = searcher.search("arrow", { allOccurrences: true });
+      const results = searcher.search("arrow");
       const snippet = results.results.find(s => s.heading && s.heading.depth > 1);
 
       if (snippet) {
@@ -190,7 +190,7 @@ Keep learning and practicing.
     });
 
     it("debería aceptar separador personalizado en breadcrumbs", () => {
-      const results = searcher.search("arrow", { allOccurrences: true });
+      const results = searcher.search("arrow");
       const snippet = results.results.find(s => s.heading && s.heading.depth > 1);
 
       if (snippet) {
@@ -202,7 +202,7 @@ Keep learning and practicing.
 
   describe("Contenido", () => {
     it("debería tener método hasContent disponible", () => {
-      const results = searcher.search("functions", { allOccurrences: true });
+      const results = searcher.search("functions");
       const snippet = results.results[0];
 
       // Verificar que el método existe y se puede llamar
@@ -215,7 +215,7 @@ Keep learning and practicing.
     });
 
     it("debería obtener contenido de la sección", () => {
-      const results = searcher.search("let", { allOccurrences: true });
+      const results = searcher.search("let");
       const snippet = results.results.find(s => s.heading && s.hasContent());
 
       if (snippet && snippet.hasContent()) {
@@ -230,7 +230,7 @@ Keep learning and practicing.
 
   describe("Detalles completos", () => {
     it("debería obtener detalles completos del heading", () => {
-      const results = searcher.search("arrow", { allOccurrences: true });
+      const results = searcher.search("arrow");
       const snippet = results.results.find(s => s.heading);
 
       if (snippet) {
@@ -246,7 +246,7 @@ Keep learning and practicing.
 
   describe("Ancestros", () => {
     it("debería obtener ancestro por profundidad", () => {
-      const results = searcher.search("arrow", { allOccurrences: true });
+      const results = searcher.search("arrow");
       const snippet = results.results.find(s => s.heading && s.heading.depth === 3);
 
       if (snippet) {
@@ -261,7 +261,7 @@ Keep learning and practicing.
 
   describe("Hermanos (siblings)", () => {
     it("debería obtener hermanos del mismo nivel", () => {
-      const results = searcher.search("arrow functions", { allOccurrences: true });
+      const results = searcher.search("arrow functions");
       const snippet = results.results.find(s => s.heading && s.heading.depth === 3);
 
       if (snippet) {

@@ -43,7 +43,7 @@ es esencial para cualquier desarrollador web. JavaScript no va a desaparecer pro
   // OPCIÓN 1: Una sola ocurrencia por documento
   console.log("\n🔍 OPCIÓN 1: Una Ocurrencia por Documento\n");
   const single = searcher.search("JavaScript", { 
-    allOccurrences: false,
+    limitSnippets: 1,
     snippetLength: 100 
   });
 
@@ -58,8 +58,7 @@ es esencial para cualquier desarrollador web. JavaScript no va a desaparecer pro
   // OPCIÓN 2: Todas las ocurrencias (default)
   console.log("\n🔍 OPCIÓN 2: Todas las Ocurrencias (default)\n");
   const all = searcher.search("JavaScript", { 
-    allOccurrences: true,
-    maxOccurrences: 15,
+    limitSnippets: 15,
     snippetLength: 80
   });
 
@@ -75,8 +74,7 @@ es esencial para cualquier desarrollador web. JavaScript no va a desaparecer pro
   // OPCIÓN 3: Limitar a 5 ocurrencias
   console.log("\n🔍 OPCIÓN 3: Primeras 5 Ocurrencias\n");
   const limited = searcher.search("JavaScript", { 
-    allOccurrences: true,
-    maxOccurrences: 5
+    limitSnippets: 5
   });
 
   console.log(`Mostrando ${limited.totalSnippets} ocurrencias:\n`);
@@ -85,8 +83,8 @@ es esencial para cualquier desarrollador web. JavaScript no va a desaparecer pro
   });
 
   console.log("\n" + "=".repeat(70));
-  console.log("\n💡 TIP: Usa allOccurrences:true cuando necesites ver todas las menciones");
-  console.log("   del término en el documento, no solo la primera.\n");
+  console.log("\n💡 TIP: Usa limitSnippets para controlar cuántas ocurrencias por documento");
+  console.log("   (1 = solo la mejor, más = más contexto).\n");
 
   searcher.close();
 }

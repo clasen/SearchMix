@@ -4,7 +4,8 @@ import path from "node:path";
 
 console.log("=== Ejemplo Básico: Conversión EPUB a Markdown ===\n");
 
-const epubPath = "./examples/docs/Están aquí - J. J. Benítez.epub";
+const epubPath = "./examples/docs/Normal People -- Sally Rooney -- 2018.epub";
+// const epubPath = "./examples/docs/Están aquí - J. J. Benítez.epub";
 const outputPath = epubPath.replace(".epub", ".md");
 
 console.log(`Convirtiendo: ${epubPath}`);

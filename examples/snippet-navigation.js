@@ -63,8 +63,7 @@ Es importante mantenerse actualizado con el estándar.
   console.log("=== Búsqueda: 'arrow functions' ===\n");
   const results = searcher.search("arrow functions", { 
     limit: 3,
-    allOccurrences: true,
-    maxOccurrences: 5
+    limitSnippets: 5
   });
 
   if (results.results.length > 0) {
@@ -115,8 +114,7 @@ Es importante mantenerse actualizado con el estándar.
   console.log("\n\n=== Ejemplo: Exploración de Jerarquía ===\n");
   
   const exploreResults = searcher.search("promesas", { 
-    allOccurrences: true,
-    maxOccurrences: 3
+    limitSnippets: 3
   });
 
   if (exploreResults.results.length > 0) {
@@ -153,8 +151,7 @@ Es importante mantenerse actualizado con el estándar.
   
   const indexResults = searcher.search("javascript OR funciones OR async", { 
     limit: 10,
-    allOccurrences: true,
-    maxOccurrences: 20
+    limitSnippets: 20
   });
 
   // Agrupar snippets por sección

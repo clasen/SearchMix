@@ -5,11 +5,12 @@ console.log("=== Example 1: Basic Usage - Full Content ===\n");
 const searcher1 = new SearchMix();
 
 // Add documents - await ensures EPUB/PDF conversions complete
-await searcher1.addDocument("./examples/books");
+await searcher1.addDocument("./examples/docs");
 
 // Search - returns a flat list of snippets
 const results1 = searcher1.search("plato volador", {
-    maxOccurrences: 1,
+    limit: 1,
+    limitSnippets: 1,
     snippetLength: 500  // Much larger context to show full stories
 });
 
@@ -23,7 +24,7 @@ results1.results.forEach((snippet, index) => {
     console.log(`📄 Snippet ${index + 1}`);
     console.log(`   Document: ${snippet.documentPath}`);
     console.log(`   Title: ${snippet.documentTitle || 'N/A'}`);
-    console.log(`   Collection: ${snippet.collection}`);
+    console.log(`   Tags: ${snippet.tags}`);
     console.log(`   Rank: ${snippet.rank}`);
     console.log(`${"=".repeat(80)}\n`);
 
