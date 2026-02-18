@@ -4,17 +4,17 @@ A powerful JavaScript library for indexing and searching Markdown, EPUB, PDF, TX
 
 ## Features
 
-- 🚀 **Fast Full-Text Search** - Powered by SQLite FTS5 with BM25 ranking
-- 🧠 **Smart Indexing** - Automatically detects new and modified files, only reindexes what changed
-- 📚 **Multiple Formats** - Support for Markdown (.md), EPUB, PDF, TXT, and SRT files
-- 🗂️ **Collections** - Organize documents into logical groups
-- 🔗 **Method Chaining** - Fluent API for easy composition
-- 💾 **Buffer Support** - Index content directly from memory
-- 🎯 **Advanced Search** - FTS5 syntax with column-specific and boolean queries
-- 📍 **Context Snippets** - Shows where matches occur with surrounding text
-- 🔄 **No Duplicates** - Automatic duplicate detection and updating
-- 🌍 **Accent & Case Insensitive** - Search "mediterraneo" to find "MEDITERRÁNEO"
-- ⚡ **Zero Configuration** - Works out of the box with sensible defaults
+- **Fast Full-Text Search** - Powered by SQLite FTS5 with BM25 ranking
+- **Smart Indexing** - Automatically detects new and modified files, only reindexes what changed
+- **Multiple Formats** - Support for Markdown (.md), EPUB, PDF, TXT, and SRT files
+- **Tags** - Organize documents with multiple tags per document
+- **Method Chaining** - Fluent API for easy composition
+- **Buffer Support** - Index content directly from memory
+- **Advanced Search** - FTS5 syntax with column-specific and boolean queries
+- **Context Snippets** - Shows where matches occur with surrounding text
+- **No Duplicates** - Automatic duplicate detection and updating
+- **Accent & Case Insensitive** - Search "mediterraneo" to find "MEDITERRÁNEO"
+- **Zero Configuration** - Works out of the box with sensible defaults
 
 ## Installation
 
@@ -27,35 +27,28 @@ npm install searchmix
 ```javascript
 import SearchMix from "searchmix";
 
-// Create a new instance (uses ./db/searchmix.db by default)
 const searcher = new SearchMix();
 
-// Index documents (automatically detects new and modified files)
-await searcher.addDocument("./docs");  // Index entire directory
-
-// Call again later - only new/modified files are reindexed (very fast!)
+// Index a folder — only new/modified files are reindexed on subsequent calls
 await searcher.addDocument("./docs");
 
-// Search - returns a flat list of snippets
-const results = searcher.search("markdown");
-console.log(results);
-// {
-//   results: [
-//     Snippet { 
-//       text: "...", 
-//       documentPath: "...", 
-//       documentTitle: "...", 
-//       collection: "main",
-//       rank: -2.4,
-//       section: "body",
-//       ...
-//     }
-//   ],
-//   totalCount: 5,      // Total matching documents
-//   totalSnippets: 8    // Total snippets found
-// }
+// Search returns a flat list of ranked snippets
+const { results, totalCount, totalSnippets } = searcher.search("mediterraneo", {
+    limit: 1,         // max documents to return
+    limitSnippets: 10 // max snippets per document
+});
+// totalCount    → 3  (matching documents)
+// totalSnippets → 8  (total snippets across all documents)
 
-searcher.close();
+for (const [i, s] of results.entries()) {
+    s.documentTitle || s.documentPath               // → "Don Quijote"
+    s.heading?.text ?? "(no heading)"               // → "Capítulo XV"
+    s.getText({ length: 200, offset: -80 })         // → "...en las costas del mediterráneo..."
+}
+
+searcher.getStats();
+// → { totalDocs: 39, tags: { spa: 39 } }
+
 ```
 
 ## API Reference
@@ -89,7 +82,7 @@ Add document(s) to the index. Returns `this` for chaining.
   - Path to a directory (scans recursively)
   - Buffer containing Markdown content
 - `options` (object)
-  - `collection` (string) - Collection name. Default: `"main"`
+  - `tags` (string|string[]) - Tags for the document. Default: `[]`. Language is auto-detected and added automatically.
   - `exclude` (array) - Patterns to exclude when scanning. Default: `["node_modules", ".git"]`
   - `recursive` (boolean) - Scan directories recursively. Default: `true`
   - `skipExisting` (boolean) - Skip documents already indexed. Default: `true`
@@ -116,11 +109,11 @@ await searcher.addDocument("./docs");
 // Second call: only indexes new or modified files (very fast!)
 await searcher.addDocument("./docs");
 
-// Organize by collections
+// Organize by tags
 searcher
-  .addDocument("./notes", { collection: "notes" })
-  .addDocument("./book.epub", { collection: "books" })
-  .addDocument(Buffer.from("# Note\nContent"), { collection: "quick" });
+  .addDocument("./notes", { tags: "notes" })
+  .addDocument("./book.epub", { tags: "books" })
+  .addDocument(Buffer.from("# Note\nContent"), { tags: ["quick", "notes"] });
 
 // Force update all existing documents
 searcher.addDocument("./notes", { update: true });
@@ -147,11 +140,11 @@ Search indexed documents. Returns a **flat list of snippets** where each snippet
 - `options` (object)
   - `limit` (number) - Maximum documents to search. Default: `20`
   - `minScore` (number|null) - Minimum score threshold. Default: `null`
-  - `collection` (string|null) - Filter by collection. Default: `null`
+  - `tags` (string|string[]|null) - Filter by tag(s). Documents matching any tag + untagged docs are returned. Default: `null`
   - `snippets` (boolean) - Include text snippets showing where matches occur. Default: `true`
   - `snippetLength` (number) - Characters of context around matches. Default: `150`
-  - `allOccurrences` (boolean) - Return all occurrences as flat list (default: `true`) or one per document. Default: `true`
-  - `maxOccurrences` (number) - Maximum occurrences per document when `allOccurrences` is true. Default: `10`
+  - `limitSnippets` (number) - Maximum snippets per document. Default: `5`
+  - `count` (boolean) - Execute COUNT query for totalCount. Default: `true`
 
 **Returns:** `{ results: [Snippet, ...], totalCount: number, totalSnippets: number }`
 
@@ -164,7 +157,7 @@ Search indexed documents. Returns a **flat list of snippets** where each snippet
 *Document metadata:*
 - `documentPath` - Document path
 - `documentTitle` - Document title
-- `collection` - Collection name
+- `tags` - Array of tags assigned to the document
 - `rank` - BM25 relevance score
 
 *Match context:*
@@ -214,8 +207,8 @@ searcher.search("sqlite NOT backup");
 // Phrase search
 searcher.search('"full text search"');
 
-// Search in specific collection
-searcher.search("api", { collection: "docs" });
+// Search filtered by tag
+searcher.search("api", { tags: "docs" });
 
 // Filter by relevance
 searcher.search("database", { minScore: 0.5 });
@@ -239,7 +232,7 @@ Get a document by exact path.
 
 ```javascript
 const doc = searcher.get("./docs/README.md");
-// { path, title, headings, body, collection }
+// { path, title, h1, h2, h3, h4, h5, h6, body, tags, structure, sections_index }
 ```
 
 #### `getMultiple(pattern)`
@@ -264,12 +257,12 @@ Remove a document from the index. Returns `this` for chaining.
 searcher.removeDocument("./old-note.md");
 ```
 
-#### `removeCollection(name)`
+#### `removeByTag(tagName)`
 
-Remove all documents in a collection. Returns `this` for chaining.
+Remove all documents that have a specific tag. Returns `this` for chaining.
 
 ```javascript
-searcher.removeCollection("temp");
+searcher.removeByTag("temp");
 ```
 
 #### `hasDocument(path)`
@@ -295,18 +288,18 @@ Get statistics about indexed documents.
 **Parameters:**
 
 - `options` (object)
-  - `collection` (string|null) - Get stats for specific collection. Default: `null`
+  - `tag` (string|null) - Get stats for a specific tag. Default: `null`
 
 **Returns:** Statistics object.
 
 ```javascript
-// All collections
+// All tags
 const stats = searcher.getStats();
-// { totalDocs: 150, collections: { main: 80, notes: 50, books: 20 } }
+// { totalDocs: 150, tags: { notes: 80, books: 50, spa: 20 } }
 
-// Specific collection
-const notesStats = searcher.getStats({ collection: "notes" });
-// { totalDocs: 50, collection: "notes" }
+// Specific tag
+const notesStats = searcher.getStats({ tag: "notes" });
+// { totalDocs: 80, tag: "notes" }
 ```
 
 #### `clear()`
@@ -352,24 +345,26 @@ searcher.close();
 
 **Note:** Running this multiple times will only index documents once. Already indexed documents are automatically skipped for better performance.
 
-### Using Collections
+### Using Tags
 
 ```javascript
 const searcher = new SearchMix({
   dbPath: "./search.db",
-  weights: { title: 15.0, headings: 5.0, body: 1.0 }
+  weights: { title: 15.0, h1: 5.0, body: 1.0 }
 });
 
-// Organize documents into collections
-searcher
-  .addDocument("~/notes", { collection: "notes" })
-  .addDocument("~/library", { collection: "books" })
-  .addDocument("~/work/docs", { collection: "docs" });
+// Organize documents with tags (supports multiple tags per document)
+await searcher.addDocument("~/notes", { tags: "notes" });
+await searcher.addDocument("~/library", { tags: "books" });
+await searcher.addDocument("~/work/docs", { tags: ["docs", "work"] });
 
-// Search in specific collection
-const bookResults = searcher.search("javascript", { collection: "books" });
+// Search filtered by tag
+const bookResults = searcher.search("javascript", { tags: "books" });
 
-// Search across all collections
+// Search filtered by multiple tags (matches any)
+const workResults = searcher.search("javascript", { tags: ["docs", "notes"] });
+
+// Search across all documents
 const allResults = searcher.search("javascript");
 
 searcher.close();
@@ -381,12 +376,11 @@ searcher.close();
 const searcher = new SearchMix();
 
 // Index EPUB files (automatically converted to markdown)
-searcher
-  .addDocument("~/library/book1.epub", { collection: "books" })
-  .addDocument("~/library", { collection: "books" }); // Scans for all .epub files
+await searcher.addDocument("~/library/book1.epub", { tags: "books" });
+await searcher.addDocument("~/library", { tags: "books" }); // Scans for all .epub files
 
 // Search within books
-const results = searcher.search("chapter", { collection: "books" });
+const results = searcher.search("chapter", { tags: "books" });
 
 searcher.close();
 ```
@@ -469,7 +463,7 @@ const fastResults = searcher.search("api", {
 const relevantResults = searcher.search("api documentation", {
   minScore: 0.3,
   limit: 10,
-  collection: "docs",
+  tags: "docs",
   snippetLength: 200
 });
 
@@ -741,7 +735,7 @@ SearchMix uses SQLite's FTS5 (Full-Text Search 5) extension to provide fast, eff
 
 3. **Ranking** - Search results are ranked using BM25 algorithm with configurable weights
 
-4. **Collections** - Documents can be organized into collections for better organization and filtered searching
+4. **Tags** - Documents can be assigned multiple tags for organization and filtered searching
 
 ## Supported File Types
 
@@ -785,7 +779,7 @@ const searcher = new SearchMix({ includeCodeBlocks: true });
 
 ## Performance Tips
 
-- Use **collections** to organize documents and narrow search scope
+- Use **tags** to organize documents and narrow search scope
 - Set **minScore** to filter out irrelevant results
 - Use **limit** to control the number of results returned
 - For large directories, consider excluding irrelevant paths with the `exclude` option

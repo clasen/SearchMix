@@ -18,7 +18,7 @@ describe("Snippet", () => {
     searcher = new SearchMix({ dbPath: TEST_DB_PATH });
     searcher.clear();
 
-    // Crear documento con estructura jerárquica
+    // Create document with hierarchical structure
     await searcher.addDocument(Buffer.from(`
 # Programming Guide
 
@@ -57,8 +57,8 @@ Keep learning and practicing.
     }
   });
 
-  describe("Propiedades básicas", () => {
-    it("debería tener propiedades básicas", () => {
+  describe("Basic properties", () => {
+    it("should have basic properties", () => {
       const results = searcher.search("arrow functions");
       const snippet = results.results[0];
 
@@ -69,7 +69,7 @@ Keep learning and practicing.
       assert.ok(snippet.documentTitle);
     });
 
-    it("debería tener método toString()", () => {
+    it("should have toString() method", () => {
       const results = searcher.search("arrow");
       const snippet = results.results[0];
 
@@ -78,7 +78,7 @@ Keep learning and practicing.
       assert.ok(str.includes(snippet.section));
     });
 
-    it("debería tener método toJSON()", () => {
+    it("should have toJSON() method", () => {
       const results = searcher.search("arrow");
       const snippet = results.results[0];
 
@@ -89,8 +89,8 @@ Keep learning and practicing.
     });
   });
 
-  describe("Navegación jerárquica", () => {
-    it("debería tener información de heading", () => {
+  describe("Hierarchical navigation", () => {
+    it("should have heading information", () => {
       const results = searcher.search("arrow functions");
       const snippet = results.results.find(s => s.heading);
 
@@ -102,7 +102,7 @@ Keep learning and practicing.
       }
     });
 
-    it("debería verificar existencia de padre", () => {
+    it("should verify parent existence", () => {
       const results = searcher.search("arrow");
       const snippet = results.results.find(s => s.heading && s.heading.depth > 1);
 
@@ -112,7 +112,7 @@ Keep learning and practicing.
       }
     });
 
-    it("debería obtener información del padre", () => {
+    it("should get parent information", () => {
       const results = searcher.search("let and const");
       const snippet = results.results.find(s => s.heading && s.heading.depth === 3);
 
@@ -125,7 +125,7 @@ Keep learning and practicing.
       }
     });
 
-    it("debería verificar existencia de hijos", () => {
+    it("should verify children existence", () => {
       const results = searcher.search("functions");
       const snippet = results.results.find(s => s.heading && s.heading.depth === 2);
 
@@ -135,7 +135,7 @@ Keep learning and practicing.
       }
     });
 
-    it("debería obtener hijos", () => {
+    it("should get children", () => {
       const results = searcher.search("functions");
       const snippet = results.results.find(s => 
         s.heading && s.heading.depth === 2 && s.hasChildren()
@@ -150,7 +150,7 @@ Keep learning and practicing.
       }
     });
 
-    it("debería obtener un hijo específico", () => {
+    it("should get a specific child", () => {
       const results = searcher.search("functions");
       const snippet = results.results.find(s => 
         s.heading && s.heading.depth === 2 && s.hasChildren()
@@ -165,7 +165,7 @@ Keep learning and practicing.
   });
 
   describe("Breadcrumbs", () => {
-    it("debería generar breadcrumbs como array", () => {
+    it("should generate breadcrumbs as array", () => {
       const results = searcher.search("arrow functions");
       const snippet = results.results.find(s => s.heading && s.heading.depth > 1);
 
@@ -178,7 +178,7 @@ Keep learning and practicing.
       }
     });
 
-    it("debería generar breadcrumbs como texto", () => {
+    it("should generate breadcrumbs as text", () => {
       const results = searcher.search("arrow");
       const snippet = results.results.find(s => s.heading && s.heading.depth > 1);
 
@@ -189,7 +189,7 @@ Keep learning and practicing.
       }
     });
 
-    it("debería aceptar separador personalizado en breadcrumbs", () => {
+    it("should accept custom separator in breadcrumbs", () => {
       const results = searcher.search("arrow");
       const snippet = results.results.find(s => s.heading && s.heading.depth > 1);
 
@@ -200,21 +200,21 @@ Keep learning and practicing.
     });
   });
 
-  describe("Contenido", () => {
-    it("debería tener método hasContent disponible", () => {
+  describe("Content", () => {
+    it("should have hasContent method available", () => {
       const results = searcher.search("functions");
       const snippet = results.results[0];
 
-      // Verificar que el método existe y se puede llamar
+      // Verify the method exists and can be called
       assert.ok(typeof snippet.hasContent === "function");
       
-      // Llamar al método (puede retornar truthy o falsy)
+      // Call the method (may return truthy or falsy)
       const result = snippet.hasContent();
-      // Simplemente verificar que no lanza error
+      // Simply verify it does not throw
       assert.ok(result === true || result === false || result === undefined || typeof result === "number");
     });
 
-    it("debería obtener contenido de la sección", () => {
+    it("should get section content", () => {
       const results = searcher.search("let");
       const snippet = results.results.find(s => s.heading && s.hasContent());
 
@@ -228,8 +228,8 @@ Keep learning and practicing.
     });
   });
 
-  describe("Detalles completos", () => {
-    it("debería obtener detalles completos del heading", () => {
+  describe("Full details", () => {
+    it("should get full heading details", () => {
       const results = searcher.search("arrow");
       const snippet = results.results.find(s => s.heading);
 
@@ -244,8 +244,8 @@ Keep learning and practicing.
     });
   });
 
-  describe("Ancestros", () => {
-    it("debería obtener ancestro por profundidad", () => {
+  describe("Ancestors", () => {
+    it("should get ancestor by depth", () => {
       const results = searcher.search("arrow");
       const snippet = results.results.find(s => s.heading && s.heading.depth === 3);
 
@@ -259,21 +259,21 @@ Keep learning and practicing.
     });
   });
 
-  describe("Hermanos (siblings)", () => {
-    it("debería obtener hermanos del mismo nivel", () => {
+  describe("Siblings", () => {
+    it("should get siblings at the same level", () => {
       const results = searcher.search("arrow functions");
       const snippet = results.results.find(s => s.heading && s.heading.depth === 3);
 
       if (snippet) {
         const siblings = snippet.getSiblings();
         assert.ok(Array.isArray(siblings));
-        // Puede tener 0 o más hermanos
+        // May have 0 or more siblings
       }
     });
   });
 
-  describe("Obtener texto", () => {
-    it("debería obtener texto del documento", () => {
+  describe("Get text", () => {
+    it("should get document text", () => {
       const results = searcher.search("programming");
       const snippet = results.results[0];
 
@@ -282,7 +282,7 @@ Keep learning and practicing.
       assert.ok(text.length > 0);
     });
 
-    it("debería respetar la longitud solicitada", () => {
+    it("should respect the requested length", () => {
       const results = searcher.search("programming");
       const snippet = results.results[0];
 

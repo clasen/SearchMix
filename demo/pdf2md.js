@@ -1,4 +1,4 @@
-import { pdfToMarkdown } from "../lib/pdf-converter.js";
+import { pdfToMarkdown } from "../lib/pdf-to-markdown.js";
 import fs from "node:fs";
 import path from "node:path";
 

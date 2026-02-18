@@ -1,11 +1,11 @@
-import { epubToMarkdown } from "../lib/epub-converter.js";
+import { epubToMarkdown } from "../lib/epub-to-markdown.js";
 import fs from "node:fs";
 import path from "node:path";
 
 console.log("=== Ejemplo Básico: Conversión EPUB a Markdown ===\n");
 
-const epubPath = "./demo/docs/Normal People -- Sally Rooney -- 2018.epub";
-// const epubPath = "./demo/docs/Están aquí - J. J. Benítez.epub";
+// const epubPath = "./demo/books/Epub/Flores que se abren de noche - Tomás Downey.epub";
+const epubPath = "./demo/books/Epub/Están aquí.epub";
 const outputPath = epubPath.replace(".epub", ".md");
 
 console.log(`Convirtiendo: ${epubPath}`);

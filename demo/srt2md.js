@@ -1,4 +1,4 @@
-import { srtToMarkdown, getSRTStats } from "../lib/srt-converter.js";
+import { srtToMarkdown, getSRTStats } from "../lib/srt-to-markdown.js";
 import fs from "node:fs";
 import path from "node:path";
 

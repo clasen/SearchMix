@@ -11,14 +11,14 @@ describe("SearchMix", () => {
   let searcher;
 
   before(() => {
-    // Crear directorio de test si no existe
+    // Create test directory if it does not exist
     if (!fs.existsSync(TEST_DB_DIR)) {
       fs.mkdirSync(TEST_DB_DIR, { recursive: true });
     }
   });
 
   after(() => {
-    // Limpiar base de datos de test
+    // Clean up test database
     if (searcher) {
       searcher.close();
     }
@@ -28,13 +28,13 @@ describe("SearchMix", () => {
   });
 
   describe("Constructor", () => {
-    it("debería crear una instancia con configuración por defecto", () => {
+    it("should create an instance with default configuration", () => {
       searcher = new SearchMix({ dbPath: TEST_DB_PATH });
       assert.ok(searcher);
       assert.strictEqual(searcher.dbPath, path.resolve(TEST_DB_PATH));
     });
 
-    it("debería aceptar configuración personalizada", () => {
+    it("should accept custom configuration", () => {
       searcher = new SearchMix({
         dbPath: TEST_DB_PATH,
         includeCodeBlocks: true,
@@ -45,8 +45,8 @@ describe("SearchMix", () => {
     });
   });
 
-  describe("Indexación de documentos", () => {
-    it("debería indexar un documento desde Buffer", async () => {
+  describe("Document indexing", () => {
+    it("should index a document from Buffer", async () => {
       searcher = new SearchMix({ dbPath: TEST_DB_PATH });
       const content = Buffer.from("# Test Document\n\nThis is a test.");
       
@@ -56,7 +56,7 @@ describe("SearchMix", () => {
       assert.strictEqual(stats.totalDocs, 1);
     });
 
-    it("debería indexar documento con headings", async () => {
+    it("should index a document with headings", async () => {
       searcher = new SearchMix({ dbPath: TEST_DB_PATH });
       const content = Buffer.from(`
 # Title
@@ -72,7 +72,7 @@ Content of section 2.
       assert.ok(results.totalCount > 0);
     });
 
-    it("debería evitar duplicados al indexar dos veces", async () => {
+    it("should avoid duplicates when indexing twice", async () => {
       searcher = new SearchMix({ dbPath: TEST_DB_PATH });
       searcher.clear();
       
@@ -82,13 +82,13 @@ Content of section 2.
       await searcher.addDocument(content, { tags: ["test"] });
       
       const stats = searcher.getStats();
-      // Los buffers siempre generan nuevas rutas únicas (buffer://<uuid>)
-      // por lo que no se pueden detectar como duplicados
+      // Buffers always generate unique paths (buffer://<uuid>)
+      // so they cannot be detected as duplicates
       assert.ok(stats.totalDocs >= 1);
     });
   });
 
-  describe("Búsqueda", () => {
+  describe("Search", () => {
     before(async () => {
       searcher = new SearchMix({ dbPath: TEST_DB_PATH });
       searcher.clear();
@@ -103,13 +103,13 @@ Functions are reusable code blocks.
 `), { tags: ["docs"] });
     });
 
-    it("debería encontrar documentos por término simple", () => {
+    it("should find documents by simple term", () => {
       const results = searcher.search("javascript");
       assert.ok(results.totalCount > 0);
       assert.ok(results.results.length > 0);
     });
 
-    it("debería retornar snippets con metadata", () => {
+    it("should return snippets with metadata", () => {
       const results = searcher.search("javascript");
       const snippet = results.results[0];
       
@@ -121,24 +121,24 @@ Functions are reusable code blocks.
       assert.ok(typeof snippet.rank === "number");
     });
 
-    it("debería soportar búsqueda con operadores booleanos", () => {
+    it("should support search with boolean operators", () => {
       const results = searcher.search("javascript AND functions");
       assert.ok(results.totalCount >= 0);
     });
 
-    it("debería soportar búsqueda en campos específicos", () => {
+    it("should support search in specific fields", () => {
       const results = searcher.search("title:javascript");
       assert.ok(results.totalCount > 0);
     });
 
-    it("debería retornar múltiples snippets por documento", () => {
+    it("should return multiple snippets per document", () => {
       const results = searcher.search("functions", { 
         limitSnippets: 5 
       });
       assert.ok(results.totalSnippets >= results.totalCount);
     });
 
-    it("debería respetar el límite de resultados", () => {
+    it("should respect the results limit", () => {
       const results = searcher.search("javascript OR functions", { 
         limit: 1,
         limitSnippets: 1
@@ -147,7 +147,7 @@ Functions are reusable code blocks.
     });
   });
 
-  describe("Búsqueda insensible a acentos", () => {
+  describe("Accent-insensitive search", () => {
     before(async () => {
       searcher = new SearchMix({ dbPath: TEST_DB_PATH });
       searcher.clear();
@@ -160,24 +160,24 @@ París es la capital de Francia.
 `), { tags: ["travel"] });
     });
 
-    it("debería encontrar 'Mediterráneo' buscando 'mediterraneo'", () => {
+    it("should find 'Mediterráneo' searching 'mediterraneo'", () => {
       const results = searcher.search("mediterraneo");
       assert.ok(results.totalCount > 0);
     });
 
-    it("debería encontrar 'París' buscando 'paris'", () => {
+    it("should find 'París' searching 'paris'", () => {
       const results = searcher.search("paris");
       assert.ok(results.totalCount > 0);
     });
 
-    it("debería ser case insensitive", () => {
+    it("should be case insensitive", () => {
       const results1 = searcher.search("MEDITERRÁNEO");
       const results2 = searcher.search("mediterráneo");
       assert.strictEqual(results1.totalCount, results2.totalCount);
     });
   });
 
-  describe("Tags (colecciones como tags)", () => {
+  describe("Tags", () => {
     before(async () => {
       searcher = new SearchMix({ dbPath: TEST_DB_PATH });
       searcher.clear();
@@ -192,7 +192,7 @@ París es la capital de Francia.
       );
     });
 
-    it("debería filtrar búsqueda por tag", () => {
+    it("should filter search by tag", () => {
       const results = searcher.search("content", { 
         tags: "tagA" 
       });
@@ -200,14 +200,14 @@ París es la capital de Francia.
       assert.ok(results.results[0].tags.includes("tagA"));
     });
 
-    it("debería obtener estadísticas por tag", () => {
+    it("should get statistics by tag", () => {
       const stats = searcher.getStats();
       assert.strictEqual(stats.totalDocs, 2);
       assert.strictEqual(stats.tags.tagA, 1);
       assert.strictEqual(stats.tags.tagB, 1);
     });
 
-    it("debería soportar múltiples tags por documento", async () => {
+    it("should support multiple tags per document", async () => {
       searcher.clear();
       
       await searcher.addDocument(
@@ -222,7 +222,7 @@ París es la capital de Francia.
       assert.ok(resultsB.totalCount > 0);
     });
 
-    it("documentos sin tags deberían aparecer en búsquedas con tag filter", async () => {
+    it("untagged documents should appear in searches with tag filter", async () => {
       searcher.clear();
       
       // Untagged document (global)
@@ -245,7 +245,7 @@ París es la capital de Francia.
       assert.strictEqual(noFilter.totalCount, 2);
     });
 
-    it("debería auto-detectar idioma como tag", async () => {
+    it("should auto-detect language as tag", async () => {
       searcher.clear();
       
       await searcher.addDocument(
@@ -254,18 +254,18 @@ París es la capital de Francia.
       );
       
       const stats = searcher.getStats();
-      assert.ok(stats.tags.spa, "debería detectar español");
-      assert.ok(stats.tags.docs, "debería mantener tag manual");
+      assert.ok(stats.tags.spa, "should detect Spanish");
+      assert.ok(stats.tags.docs, "should keep manual tag");
     });
 
-    it("debería eliminar documentos por tag", () => {
+    it("should remove documents by tag", () => {
       searcher.removeByTag("docs");
       const stats = searcher.getStats();
       assert.strictEqual(stats.tags.docs, undefined);
     });
   });
 
-  describe("Navegación de snippets", () => {
+  describe("Snippet navigation", () => {
     before(async () => {
       searcher = new SearchMix({ dbPath: TEST_DB_PATH });
       searcher.clear();
@@ -282,7 +282,7 @@ Content in chapter 2
 `), { tags: ["nav"] });
     });
 
-    it("debería incluir información de heading en snippets", () => {
+    it("should include heading information in snippets", () => {
       const results = searcher.search("section");
       const snippet = results.results.find(s => s.heading);
       
@@ -293,7 +293,7 @@ Content in chapter 2
       }
     });
 
-    it("debería permitir obtener detalles de heading por ID", () => {
+    it("should allow getting heading details by ID", () => {
       const results = searcher.search("section");
       const snippet = results.results.find(s => s.sectionId);
       
@@ -309,22 +309,22 @@ Content in chapter 2
     });
   });
 
-  describe("Gestión de documentos", () => {
+  describe("Document management", () => {
     before(async () => {
       searcher = new SearchMix({ dbPath: TEST_DB_PATH });
       searcher.clear();
     });
 
-    it("debería verificar si documento existe", async () => {
+    it("should verify if document exists", async () => {
       const content = Buffer.from("# Test\nContent.");
       const bufferPath = await searcher.addDocument(content);
       
-      // Los buffers se guardan con rutas especiales buffer://
+      // Buffers are stored with special paths buffer://
       const stats = searcher.getStats();
       assert.ok(stats.totalDocs > 0);
     });
 
-    it("debería eliminar documento por ruta", async () => {
+    it("should remove document by path", async () => {
       searcher.clear();
       await searcher.addDocument(
         Buffer.from("# Doc to remove\nContent."),
@@ -334,24 +334,24 @@ Content in chapter 2
       const statsBefore = searcher.getStats();
       const docCount = statsBefore.totalDocs;
       
-      // Como no tenemos la ruta del buffer, verificamos que clear funciona
+      // Since we don't have the buffer path, we verify that clear works
       searcher.clear();
       const statsAfter = searcher.getStats();
       assert.strictEqual(statsAfter.totalDocs, 0);
     });
 
-    it("debería obtener documento por ruta", async () => {
+    it("should get document by path", async () => {
       searcher.clear();
       const content = Buffer.from("# Get Test\nSome content here.");
       await searcher.addDocument(content, { tags: ["test"] });
       
-      // Para buffers no podemos usar get() sin conocer la ruta exacta
-      // Pero podemos buscar
+      // For buffers we cannot use get() without knowing the exact path
+      // But we can search
       const results = searcher.search("Get Test");
       assert.ok(results.totalCount > 0);
     });
 
-    it("debería limpiar toda la base de datos", async () => {
+    it("should clear the entire database", async () => {
       await searcher.addDocument(Buffer.from("# Doc 1"), { tags: ["a"] });
       await searcher.addDocument(Buffer.from("# Doc 2"), { tags: ["b"] });
       
@@ -362,7 +362,7 @@ Content in chapter 2
     });
   });
 
-  describe("Opciones de snippet", () => {
+  describe("Snippet options", () => {
     before(async () => {
       searcher = new SearchMix({ dbPath: TEST_DB_PATH });
       searcher.clear();
@@ -375,7 +375,7 @@ And one more time search appears here.
 `), { tags: ["test"] });
     });
 
-    it("debería ajustar longitud del snippet", () => {
+    it("should adjust snippet length", () => {
       const short = searcher.search("search", { snippetLength: 30 });
       const long = searcher.search("search", { snippetLength: 100 });
       
@@ -384,16 +384,16 @@ And one more time search appears here.
       }
     });
 
-    it("debería limitar máximo de snippets por documento", () => {
+    it("should limit maximum snippets per document", () => {
       const limited = searcher.search("search", { 
         limitSnippets: 2 
       });
       assert.ok(limited.totalSnippets <= 2);
     });
 
-    it("debería poder desactivar snippets", () => {
+    it("should be able to disable snippets", () => {
       const results = searcher.search("search", { snippets: false });
-      // Sin snippets, los resultados deberían existir pero sin texto de contexto
+      // Without snippets, results should exist but without context text
       assert.ok(results.totalCount > 0);
     });
   });

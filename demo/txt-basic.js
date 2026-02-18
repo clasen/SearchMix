@@ -93,7 +93,7 @@ for all your document types.`;
   }
 
   // Get TXT file statistics
-  const { getTXTStats } = await import("../lib/txt-converter.js");
+  const { getTXTStats } = await import("../lib/txt-to-markdown.js");
   const txtStats = getTXTStats(txtPath);
   
   console.log("📄 Text File Statistics:");
