@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "📑 Lightning-fast full-text search engine for Markdown, EPUB, PDF, TXT, and SRT documents powered by SQLite FTS5",
   "license": "MIT",
-  "author": "",
+  "author": "Martin Clasen",
   "type": "module",
   "main": "index.js",
   "scripts": {
@@ -14,13 +14,15 @@
     "markdown",
     "search",
     "fts5",
+    "bm25",
     "sqlite",
     "epub",
     "pdf",
     "txt",
     "srt",
     "fulltext",
-    "indexing"
+    "indexing",
+    "clasen"
   ],
   "dependencies": {
     "better-sqlite3": "^11.8.1",
