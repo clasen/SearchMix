@@ -6,6 +6,10 @@
   "author": "Martin Clasen",
   "type": "module",
   "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/clasen/SearchMix"
+  },
   "scripts": {
     "test": "node --test test/*.test.js",
     "test:watch": "node --test --watch test/*.test.js"
