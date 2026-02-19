@@ -1,6 +1,6 @@
 {
   "name": "searchmix",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "📑 Lightning-fast full-text search engine for Markdown, EPUB, PDF, TXT, and SRT documents powered by SQLite FTS5",
   "license": "MIT",
   "author": "Martin Clasen",
@@ -32,7 +32,7 @@
     "better-sqlite3": "^11.8.1",
     "epub2": "^3.0.2",
     "franc": "^6.2.0",
-    "glob": "^11.0.0",
+    "glob": "^13.0.6",
     "iconv-lite": "^0.7.2",
     "jschardet": "^3.1.4",
     "micromatch": "^4.0.8",
