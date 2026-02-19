@@ -5,7 +5,7 @@ import path from "node:path";
 console.log("=== Ejemplo Básico: Conversión EPUB a Markdown ===\n");
 
 // const epubPath = "./demo/books/Epub/Flores que se abren de noche - Tomás Downey.epub";
-const epubPath = "./demo/books/Epub/Están aquí.epub";
+const epubPath = "./demo/books/Epub/El_sexto_mandamiento_Lawrence_Sanders.epub";
 const outputPath = epubPath.replace(".epub", ".md");
 
 console.log(`Convirtiendo: ${epubPath}`);
