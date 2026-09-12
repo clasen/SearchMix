@@ -131,8 +131,8 @@ packages:
   '@types/unist@3.0.3':
     resolution: {integrity: sha512-ko/gIFJRv177XgZsZcBwnqJN5x/Gien8qNOn0D5bQU/zAzVf9Zt3BlcUiLqhV9y4ARk0GbT3tnUiPNgnTXzc/Q==}
 
-  adm-zip@0.6.0:
-    resolution: {integrity: sha512-XleryMhbuksdKtofnWZ9Sk+4CUTbms4Mb/EU32SZwToAyZ5RgVos/ki8n+yr0LWHOGKuakbXTuuYNHLQjhddgg==}
+  adm-zip@0.6.1:
+    resolution: {integrity: sha512-Xwrja8nx9e5o2N1my4DsKCeKpdrnACyr1wtbPxBDgGzKzKyE9kRtBFA8mWldI+RVlD7CBZNWY/wQ2+ydwOR6kQ==}
     engines: {node: '>=14.0'}
 
   array-hyper-unique@2.1.6:
@@ -592,7 +592,7 @@ snapshots:
 
   '@types/unist@3.0.3': {}
 
-  adm-zip@0.6.0: {}
+  adm-zip@0.6.1: {}
 
   array-hyper-unique@2.1.6:
     dependencies:
@@ -679,7 +679,7 @@ snapshots:
 
   epub2@3.0.2(ts-toolbelt@9.6.0):
     dependencies:
-      adm-zip: 0.6.0
+      adm-zip: 0.6.1
       array-hyper-unique: 2.1.6
       bluebird: 3.7.2
       crlf-normalize: 1.0.20(ts-toolbelt@9.6.0)
